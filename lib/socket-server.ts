@@ -17,6 +17,7 @@ import {
 } from './db';
 import { getAIService } from './ai-service';
 import type { TwistType } from './ai-prompts';
+import { getPlayerContributionCount, getAIContributionCount } from './db';
 
 // Singleton pattern for Socket.io server
 let io: SocketIOServer<
@@ -25,6 +26,89 @@ let io: SocketIOServer<
   InterServerEvents,
   SocketData
 > | null = null;
+
+/**
+ * Check if AI should intervene based on contribution counts
+ * Triggers after 2-3 player contributions (with randomness)
+ */
+function shouldTriggerAI(storyId: string): boolean {
+  const playerCount = getPlayerContributionCount(storyId);
+  const aiCount = getAIContributionCount(storyId);
+
+  // Count player contributions since last AI contribution
+  const contributionsSinceAI = playerCount - aiCount;
+
+  // Don't trigger on first contribution
+  if (contributionsSinceAI === 0) return false;
+
+  // Trigger after 2-3 player turns (70% chance at 2, 100% at 3+)
+  if (contributionsSinceAI >= 3) return true;
+  if (contributionsSinceAI === 2) return Math.random() < 0.7;
+
+  return false;
+}
+
+/**
+ * Trigger AI intervention for a room
+ */
+async function triggerAIIntervention(
+  roomId: string,
+  ioInstance: SocketIOServer
+): Promise<void> {
+  try {
+    // Get room and story
+    const room = getRoom(roomId);
+    if (!room) {
+      console.error('[AI] Room not found:', roomId);
+      return;
+    }
+
+    const story = getStoryByRoom(roomId);
+    if (!story) {
+      console.error('[AI] No story found for room:', roomId);
+      return;
+    }
+
+    // Notify all players that AI is thinking
+    ioInstance.to(roomId).emit('game:ai-thinking', { isThinking: true });
+
+    // Get story contributions for context
+    const contributions = getStoryContributions(story.id);
+
+    // Generate AI twist
+    const aiService = getAIService({ useMock: !process.env.ANTHROPIC_API_KEY });
+    const response = await aiService.generateTwist({
+      contributions,
+      theme: room.theme || undefined,
+    });
+
+    // Add AI contribution to story
+    const aiContribution = addContribution(
+      story.id,
+      response.twist,
+      'ai',
+      undefined,
+      'twist' // AI contributions are always "twists"
+    );
+
+    // Notify AI is done thinking
+    ioInstance.to(roomId).emit('game:ai-thinking', { isThinking: false });
+
+    // Broadcast the twist to all players
+    ioInstance.to(roomId).emit('story:new-contribution', {
+      contributionId: aiContribution.id,
+      content: aiContribution.content,
+      type: 'ai',
+      orderNum: aiContribution.order_num,
+    });
+
+    console.log(`[AI] Auto-generated twist for room ${roomId}: "${response.twist.substring(0, 50)}..."`);
+  } catch (error) {
+    console.error('[AI] Error generating automatic twist:', error);
+    // Clear thinking state on error
+    ioInstance.to(roomId).emit('game:ai-thinking', { isThinking: false });
+  }
+}
 
 /**
  * Initialize Socket.io server
@@ -134,6 +218,49 @@ export function initSocketServer(httpServer: HTTPServer): SocketIOServer {
       }
     });
 
+    /**
+     * Start the game
+     */
+    socket.on('game:start', async ({ roomId, playerId }, callback) => {
+      try {
+        // Validate room exists
+        const room = getRoom(roomId);
+        if (!room || !room.is_active) {
+          callback({ success: false, error: 'Room not found or inactive' });
+          return;
+        }
+
+        // Get active players
+        const activePlayers = getActivePlayers(roomId);
+
+        // Check minimum players (2)
+        if (activePlayers.length < 2) {
+          callback({ success: false, error: 'Need at least 2 players to start' });
+          return;
+        }
+
+        // Verify player is the host (first player)
+        const hostPlayer = activePlayers.sort((a, b) => a.joined_at - b.joined_at)[0];
+        if (hostPlayer.id !== playerId) {
+          callback({ success: false, error: 'Only the host can start the game' });
+          return;
+        }
+
+        // Broadcast game started to all players
+        const startedAt = Date.now();
+        io?.to(roomId).emit('game:started', {
+          roomId,
+          startedAt,
+        });
+
+        console.log(`[Game] Game started in room ${roomId} with ${activePlayers.length} players`);
+        callback({ success: true });
+      } catch (error) {
+        console.error('[Socket.io] Error starting game:', error);
+        callback({ success: false, error: 'Failed to start game' });
+      }
+    });
+
     // ========== CONTRIBUTIONS ==========
 
     /**
@@ -174,6 +301,15 @@ export function initSocketServer(httpServer: HTTPServer): SocketIOServer {
         });
 
         callback({ success: true, contributionId: contribution.id });
+
+        // Check if AI should intervene (async, don't await)
+        if (io && shouldTriggerAI(story.id)) {
+          console.log(`[AI] Triggering automatic intervention for room ${roomId}`);
+          // Run AI intervention asynchronously (don't block the response)
+          triggerAIIntervention(roomId, io).catch((err) => {
+            console.error('[AI] Error in automatic intervention:', err);
+          });
+        }
       } catch (error) {
         console.error('[Socket.io] Error submitting contribution:', error);
         callback({ success: false, error: 'Failed to submit contribution' });

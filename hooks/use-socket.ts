@@ -1,71 +1,51 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import type { ServerToClientEvents, ClientToServerEvents } from '@/lib/socket-types';
 
 type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
-interface UseSocketOptions {
-  autoConnect?: boolean;
-}
-
-interface UseSocketReturn {
-  socket: TypedSocket | null;
-  isConnected: boolean;
-  joinRoom: (roomId: string, playerId: string) => Promise<{ success: boolean; error?: string }>;
-  leaveRoom: (roomId: string, playerId: string) => void;
-  submitContribution: (
-    roomId: string,
-    playerId: string,
-    content: string
-  ) => Promise<{ success: boolean; contributionId?: string; error?: string }>;
-  startTyping: (roomId: string, playerId: string) => void;
-  stopTyping: (roomId: string, playerId: string) => void;
-  requestAITwist: (roomId: string) => void;
-}
-
 /**
- * Hook for managing Socket.io connection and events
+ * Custom hook for Socket.io connection and event management
  */
-export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSocketReturn {
+export function useSocket() {
   const [socket, setSocket] = useState<TypedSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef<TypedSocket | null>(null);
 
   // Initialize socket connection
   useEffect(() => {
-    if (!autoConnect) return;
-
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
-    const newSocket: TypedSocket = io(socketUrl, {
-      autoConnect: true,
+    // Create socket connection
+    const socketInstance: TypedSocket = io({
+      path: '/socket.io',
+      transports: ['websocket', 'polling'],
     });
 
-    socketRef.current = newSocket;
-    setSocket(newSocket);
-
-    // Connection event handlers
-    newSocket.on('connect', () => {
-      console.log('[Socket.io] Connected');
+    socketInstance.on('connect', () => {
+      console.log('[Socket] Connected:', socketInstance.id);
       setIsConnected(true);
     });
 
-    newSocket.on('disconnect', () => {
-      console.log('[Socket.io] Disconnected');
+    socketInstance.on('disconnect', () => {
+      console.log('[Socket] Disconnected');
       setIsConnected(false);
     });
 
-    newSocket.on('error', ({ message, code }) => {
-      console.error('[Socket.io] Error:', message, code);
+    socketInstance.on('error', (data) => {
+      console.error('[Socket] Error:', data.message);
     });
+
+    socketRef.current = socketInstance;
+    setSocket(socketInstance);
 
     // Cleanup on unmount
     return () => {
-      newSocket.close();
-      socketRef.current = null;
+      if (socketInstance) {
+        socketInstance.disconnect();
+      }
     };
-  }, [autoConnect]);
+  }, []);
 
   /**
    * Join a room
@@ -79,6 +59,11 @@ export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSoc
         }
 
         socketRef.current.emit('room:join', { roomId, playerId }, (response) => {
+          if (response.success) {
+            console.log('[Socket] Joined room:', roomId);
+          } else {
+            console.error('[Socket] Failed to join room:', response.error);
+          }
           resolve(response);
         });
       });
@@ -91,11 +76,13 @@ export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSoc
    */
   const leaveRoom = useCallback((roomId: string, playerId: string) => {
     if (!socketRef.current) return;
+
     socketRef.current.emit('room:leave', { roomId, playerId });
+    console.log('[Socket] Left room:', roomId);
   }, []);
 
   /**
-   * Submit a contribution
+   * Submit a story contribution
    */
   const submitContribution = useCallback(
     (
@@ -113,6 +100,11 @@ export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSoc
           'contribution:submit',
           { roomId, playerId, content },
           (response) => {
+            if (response.success) {
+              console.log('[Socket] Contribution submitted:', response.contributionId);
+            } else {
+              console.error('[Socket] Failed to submit contribution:', response.error);
+            }
             resolve(response);
           }
         );
@@ -126,6 +118,7 @@ export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSoc
    */
   const startTyping = useCallback((roomId: string, playerId: string) => {
     if (!socketRef.current) return;
+
     socketRef.current.emit('typing:start', { roomId, playerId });
   }, []);
 
@@ -134,15 +127,52 @@ export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSoc
    */
   const stopTyping = useCallback((roomId: string, playerId: string) => {
     if (!socketRef.current) return;
+
     socketRef.current.emit('typing:stop', { roomId, playerId });
   }, []);
+
+  /**
+   * Start the game
+   */
+  const startGame = useCallback(
+    (roomId: string, playerId: string): Promise<{ success: boolean; error?: string }> => {
+      return new Promise((resolve) => {
+        if (!socketRef.current) {
+          resolve({ success: false, error: 'Socket not connected' });
+          return;
+        }
+
+        socketRef.current.emit('game:start', { roomId, playerId }, (response) => {
+          if (response.success) {
+            console.log('[Socket] Game started');
+          } else {
+            console.error('[Socket] Failed to start game:', response.error);
+          }
+          resolve(response);
+        });
+      });
+    },
+    []
+  );
 
   /**
    * Request an AI-generated twist
    */
   const requestAITwist = useCallback((roomId: string) => {
     if (!socketRef.current) return;
+
     socketRef.current.emit('game:request-ai-twist', { roomId });
+    console.log('[Socket] Requested AI twist');
+  }, []);
+
+  /**
+   * End the current story
+   */
+  const endStory = useCallback((roomId: string, storyId: string) => {
+    if (!socketRef.current) return;
+
+    socketRef.current.emit('game:end-story', { roomId, storyId });
+    console.log('[Socket] Ended story:', storyId);
   }, []);
 
   return {
@@ -153,6 +183,8 @@ export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSoc
     submitContribution,
     startTyping,
     stopTyping,
+    startGame,
     requestAITwist,
+    endStory,
   };
 }

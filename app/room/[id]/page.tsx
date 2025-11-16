@@ -38,6 +38,7 @@ export default function RoomPage({ params }: RoomPageProps) {
     submitContribution,
     startTyping,
     stopTyping,
+    startGame,
     requestAITwist,
   } = useSocket();
 
@@ -103,11 +104,47 @@ export default function RoomPage({ params }: RoomPageProps) {
       const result = await joinRoom(roomId, playerId);
       if (!result.success) {
         console.error('Failed to join room via WebSocket:', result.error);
+        return;
+      }
+
+      // Fetch initial room state (players and contributions)
+      try {
+        const response = await fetch(`/api/rooms/${roomId}`);
+        if (response.ok) {
+          const data = await response.json();
+
+          // Set initial players
+          setPlayers(
+            data.players.map((p: any) => ({
+              id: p.id,
+              nickname: p.nickname,
+              color: p.color,
+              isActive: p.isActive,
+              isTyping: false,
+            }))
+          );
+
+          // Set room data if not already set
+          if (!roomData) {
+            setRoomData({
+              gameMode: data.room.gameMode,
+              theme: data.room.theme,
+              maxPlayers: data.room.maxPlayers,
+            });
+          }
+
+          // If game already started, set state to playing
+          if (data.stats.isGameStarted && data.stats.contributionCount > 0) {
+            setGameState('playing');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching initial room state:', error);
       }
     };
 
     connect();
-  }, [playerId, isConnected, joinRoom, roomId]);
+  }, [playerId, isConnected, joinRoom, roomId, roomData]);
 
   /**
    * Listen to WebSocket events
@@ -153,6 +190,12 @@ export default function RoomPage({ params }: RoomPageProps) {
       ]);
     });
 
+    // Game started
+    socket.on('game:started', () => {
+      console.log('Game started!');
+      setGameState('playing');
+    });
+
     // AI thinking
     socket.on('game:ai-thinking', ({ isThinking }) => {
       setAIThinking(isThinking);
@@ -170,6 +213,7 @@ export default function RoomPage({ params }: RoomPageProps) {
       socket.off('room:player-joined');
       socket.off('room:player-left');
       socket.off('story:new-contribution');
+      socket.off('game:started');
       socket.off('game:ai-thinking');
       socket.off('player:typing');
     };
@@ -211,8 +255,15 @@ export default function RoomPage({ params }: RoomPageProps) {
   /**
    * Handle start game
    */
-  const handleStartGame = () => {
-    setGameState('playing');
+  const handleStartGame = async () => {
+    if (!playerId) return;
+
+    const result = await startGame(roomId, playerId);
+    if (!result.success) {
+      console.error('Failed to start game:', result.error);
+      alert(result.error || 'Failed to start game');
+    }
+    // State transition will happen when we receive game:started event
   };
 
   // Loading state

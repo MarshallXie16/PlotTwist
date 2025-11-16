@@ -21,6 +21,7 @@ export interface ServerToClientEvents {
   'player:typing': (data: { playerId: string; nickname: string; isTyping: boolean }) => void;
 
   // Game state
+  'game:started': (data: { roomId: string; startedAt: number }) => void;
   'game:turn-change': (data: { currentPlayerId: string; turnEndsAt: number }) => void;
   'game:ai-thinking': (data: { isThinking: boolean }) => void;
 
@@ -45,6 +46,7 @@ export interface ClientToServerEvents {
   'typing:stop': (data: { roomId: string; playerId: string }) => void;
 
   // Game actions
+  'game:start': (data: { roomId: string; playerId: string }, callback: (response: { success: boolean; error?: string }) => void) => void;
   'game:request-ai-twist': (data: { roomId: string }) => void;
   'game:end-story': (data: { roomId: string; storyId: string }) => void;
 }
