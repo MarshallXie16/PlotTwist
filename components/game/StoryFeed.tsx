@@ -110,7 +110,6 @@ export function StoryFeed({
                     className="w-3 h-3 rounded-full ring-2 ring-offset-1 ring-offset-[var(--bg-primary)]"
                     style={{
                       backgroundColor: contribution.playerColor,
-                      ringColor: contribution.playerColor,
                     }}
                   />
                 )}

@@ -81,7 +81,6 @@ export function PlayerList({
                   className="w-4 h-4 rounded-full ring-2 ring-offset-2 ring-offset-[var(--bg-secondary)] flex-shrink-0"
                   style={{
                     backgroundColor: player.color,
-                    ringColor: player.color,
                   }}
                   aria-label={`${player.nickname}'s color`}
                 />

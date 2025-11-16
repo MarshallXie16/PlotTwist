@@ -13,7 +13,10 @@ Object.assign(navigator, {
 
 // Mock window.location
 delete (window as any).location;
-window.location = { origin: 'https://plottwist.app' } as Location;
+Object.defineProperty(window, 'location', {
+  value: { origin: 'https://plottwist.app' },
+  writable: true,
+});
 
 describe('WaitingRoom', () => {
   const mockPlayers: Player[] = [

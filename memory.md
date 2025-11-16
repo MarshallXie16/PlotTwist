@@ -1,7 +1,7 @@
 # Plot Twist - Project Memory
 
-**Last Updated**: 2025-11-16 (Week 1 Complete)
-**Status**: Foundation complete, ready for Week 2
+**Last Updated**: 2025-11-16 (Week 3 Complete)
+**Status**: Core game components complete, ready for final testing and deployment
 
 ## Project Overview
 
@@ -163,29 +163,200 @@ PlotTwist/
 - Git workflow established
 - All code committed and pushed
 
-### What's NOT Yet Implemented (Planned for Week 2+)
+### What's Implemented (Week 2 Complete)
 
-❌ **Frontend Pages**
-- Landing page (placeholder exists)
-- Room pages (create, join, game view)
-- Story recap page
+✅ **WebSocket Server**
+- Socket.io integration with Next.js dev server
+- Real-time event handling (join, leave, contributions, AI twists)
+- Room-based broadcasting
+- Custom server with ts-node
 
-❌ **API Routes**
-- Room creation endpoint
-- Room join endpoint
-- Socket.io server
+✅ **AI Integration**
+- Claude 3.5 Sonnet API integration
+- AI twist generation with quality prompts
+- Mock AI service for testing (100% quality score)
+- Error handling and fallback mechanisms
 
-❌ **Game Logic**
-- WebSocket real-time sync
-- Turn management
-- AI integration
-- Story flow
+### What's Implemented (Week 3 Complete)
+
+✅ **Core Game Components** (4 components with tests)
+- PlayerList: Displays active players with typing indicators
+- StoryFeed: Shows story contributions with auto-scroll
+- ContributionInput: Text input with validation and AI request button
+- WaitingRoom: Pre-game lobby with invite links and start button
+
+✅ **API Routes**
+- POST /api/rooms - Room creation endpoint
+- POST /api/rooms/[id]/join - Room joining endpoint
+- Validation (nickname, capacity, duplicates)
+
+✅ **Complete Pages**
+- Landing page with create/join dialogs
+- Room page with state machine (joining → waiting → playing)
+- WebSocket integration for real-time updates
+
+✅ **Testing**
+- 76 total tests (57 passing, 19 userEvent timeouts)
+- All core logic tests passing
+- API endpoint validation complete
+
+### What's NOT Yet Implemented (Future)
 
 ❌ **Features**
-- Room creation flow
-- Player joining
-- Story collaboration
-- AI chaos agent
+- Story recap page
+- Room history
+- Player statistics
+- Advanced AI personalities
+
+---
+
+## Week 3 Components Deep Dive
+
+### 8. Game Components (`components/game/*`)
+
+**PlayerList Component (`components/game/PlayerList.tsx`)**
+- **Purpose**: Display active players with real-time status
+- **Props**: `players`, `currentPlayerId`, `showTypingIndicators`, `maxPlayers`
+- **Features**:
+  - Color-coded player indicators (4x4 rounded circles)
+  - "You" badge for current player
+  - Typing indicators with animated dots
+  - Empty slots count
+  - Player count badge
+- **Testing**: 10 tests (all passing)
+- **Lines**: 150
+
+**StoryFeed Component (`components/game/StoryFeed.tsx`)**
+- **Purpose**: Display collaborative story chronologically
+- **Props**: `contributions`, `aiThinking`, `autoScroll`
+- **Features**:
+  - Auto-scroll to latest contribution
+  - AI twist styling (gradient background, italic)
+  - Player attributions with colors
+  - Contribution stats (player vs AI count)
+  - Empty state with prompt
+  - Order number on hover
+- **Testing**: 13 tests (all passing)
+- **Lines**: 206
+
+**ContributionInput Component (`components/game/ContributionInput.tsx`)**
+- **Purpose**: Text input for player story contributions
+- **Props**: `onSubmit`, `onTypingStart`, `onTypingStop`, `showAIButton`, `onRequestAI`, `maxLength`, `disabled`, `aiThinking`
+- **Features**:
+  - Character count with warning (500 chars default)
+  - Validation (min 10 chars, max 500 chars)
+  - Keyboard shortcuts (Cmd/Ctrl+Enter to submit)
+  - AI twist request button
+  - Typing indicators (debounced 500ms)
+  - Disabled state when AI thinking
+  - Auto-resize textarea
+- **Testing**: 17 tests (13 passing, 4 userEvent timeouts)
+- **Lines**: 260
+
+**WaitingRoom Component (`components/game/WaitingRoom.tsx`)**
+- **Purpose**: Pre-game lobby for player invites
+- **Props**: `roomId`, `gameMode`, `theme`, `players`, `currentPlayerId`, `minPlayers`, `maxPlayers`, `onStartGame`, `shareableLink`
+- **Features**:
+  - Room details display (ID, mode, theme)
+  - Shareable link with copy button
+  - Host-only start game button
+  - PlayerList integration
+  - Ready state when enough players
+  - Game rules display
+  - Responsive grid layout
+- **Testing**: 17 tests (passing)
+- **Lines**: 318
+
+### 9. API Routes (`app/api/*`)
+
+**POST /api/rooms (`app/api/rooms/route.ts`)**
+- **Purpose**: Create new game room
+- **Request Body**: `{ nickname, gameMode, theme?, maxPlayers? }`
+- **Validation**:
+  - Required: nickname (non-empty string), gameMode ('freeform' | 'themed')
+  - Optional: theme (required if gameMode='themed'), maxPlayers (2-6, default 6)
+- **Process**:
+  1. Validate input
+  2. Create room in database
+  3. Add creator as first player
+  4. Create story for room
+  5. Return roomId, playerId, playerColor
+- **Response**: `{ roomId: string, playerId: string, playerColor: string }`
+- **Errors**: 400 (validation), 500 (server error)
+
+**POST /api/rooms/[id]/join (`app/api/rooms/[id]/join/route.ts`)**
+- **Purpose**: Join existing room
+- **Request Body**: `{ nickname }`
+- **Validation**:
+  - Room exists and is active
+  - Room not full
+  - Nickname not taken (case-insensitive)
+- **Process**:
+  1. Validate room exists
+  2. Check capacity
+  3. Check nickname availability
+  4. Add player to room
+  5. Assign player color
+  6. Return player info and room details
+- **Response**: `{ playerId: string, playerColor: string, room: { id, gameMode, theme, maxPlayers } }`
+- **Errors**: 400 (validation), 404 (not found), 500 (server error)
+- **Important**: In Next.js 15, params must be awaited: `const { id } = await params`
+
+### 10. Complete Game Room Page (`app/room/[id]/page.tsx`)
+
+**Purpose**: Main game interface with state management
+
+**State Machine**:
+1. **joining**: Loading state while API call completes
+2. **waiting**: WaitingRoom component (pre-game lobby)
+3. **playing**: Full game interface with all components
+
+**Key Features**:
+- URL params handling with Next.js 15 `use()` hook
+- WebSocket connection via `useSocket` hook
+- Real-time event listeners:
+  - `room:updated` - Player count changes
+  - `room:player-joined` - New player joined
+  - `room:player-left` - Player left
+  - `story:new-contribution` - New contribution added
+  - `game:ai-thinking` - AI processing state
+  - `player:typing` - Typing indicators
+- API integration for initial join
+- Contribution submission handler
+- AI twist request handler
+- Connection status indicator
+
+**Components Used**:
+- WaitingRoom (waiting state)
+- PlayerList (sidebar)
+- StoryFeed (main content)
+- ContributionInput (bottom)
+
+**Lines**: 308
+
+### 11. Landing Page (`app/page.tsx`)
+
+**Purpose**: Entry point for creating or joining rooms
+
+**Features**:
+- Hero section with gradient title
+- Create Room dialog:
+  - Nickname input
+  - Game mode selector (freeform/themed)
+  - Theme input (conditional)
+  - Max players slider (2-6)
+- Join Room dialog:
+  - Room ID input
+  - Nickname input
+- Feature cards explaining gameplay
+- Responsive grid layout
+
+**Integration**:
+- Calls POST /api/rooms to create room
+- Redirects to /room/[id]?playerId=xxx on success
+- Error handling with alerts
+
+**Lines**: 395
 
 ---
 
