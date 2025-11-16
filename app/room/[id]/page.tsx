@@ -7,8 +7,11 @@ import { WaitingRoom } from '@/components/game/WaitingRoom';
 import { PlayerList, type Player } from '@/components/game/PlayerList';
 import { StoryFeed, type StoryContribution } from '@/components/game/StoryFeed';
 import { ContributionInput } from '@/components/game/ContributionInput';
+import { StoryRecap } from '@/components/game/StoryRecap';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
-type GameState = 'joining' | 'waiting' | 'playing';
+type GameState = 'joining' | 'waiting' | 'playing' | 'completed';
 
 interface RoomPageProps {
   params: Promise<{ id: string }>;
@@ -22,6 +25,7 @@ export default function RoomPage({ params }: RoomPageProps) {
 
   const [gameState, setGameState] = useState<GameState>('joining');
   const [playerId, setPlayerId] = useState<string | null>(null);
+  const [storyId, setStoryId] = useState<string | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [contributions, setContributions] = useState<StoryContribution[]>([]);
   const [roomData, setRoomData] = useState<{
@@ -30,6 +34,8 @@ export default function RoomPage({ params }: RoomPageProps) {
     maxPlayers: number;
   } | null>(null);
   const [aiThinking, setAIThinking] = useState(false);
+
+  const { toast } = useToast();
 
   const {
     socket,
@@ -40,6 +46,7 @@ export default function RoomPage({ params }: RoomPageProps) {
     stopTyping,
     startGame,
     requestAITwist,
+    endStory,
   } = useSocket();
 
   /**
@@ -133,9 +140,19 @@ export default function RoomPage({ params }: RoomPageProps) {
             });
           }
 
+          // Set story ID if exists
+          if (data.story) {
+            setStoryId(data.story.id);
+          }
+
           // If game already started, set state to playing
           if (data.stats.isGameStarted && data.stats.contributionCount > 0) {
             setGameState('playing');
+          }
+
+          // If story is complete, set state to completed
+          if (data.story && data.story.isComplete) {
+            setGameState('completed');
           }
         }
       } catch (error) {
@@ -164,15 +181,27 @@ export default function RoomPage({ params }: RoomPageProps) {
         if (prev.some((p) => p.id === newPlayerId)) {
           return prev;
         }
+        toast({
+          title: 'Player joined',
+          description: `${nickname} joined the room`,
+        });
         return [...prev, { id: newPlayerId, nickname, color, isActive: true, isTyping: false }];
       });
     });
 
     // Player left
     socket.on('room:player-left', ({ playerId: leftPlayerId }) => {
-      setPlayers((prev) =>
-        prev.map((p) => (p.id === leftPlayerId ? { ...p, isActive: false } : p))
-      );
+      setPlayers((prev) => {
+        const leftPlayer = prev.find((p) => p.id === leftPlayerId);
+        if (leftPlayer) {
+          toast({
+            title: 'Player left',
+            description: `${leftPlayer.nickname} left the room`,
+            variant: 'destructive',
+          });
+        }
+        return prev.map((p) => (p.id === leftPlayerId ? { ...p, isActive: false } : p));
+      });
     });
 
     // New contribution
@@ -193,7 +222,21 @@ export default function RoomPage({ params }: RoomPageProps) {
     // Game started
     socket.on('game:started', () => {
       console.log('Game started!');
+      toast({
+        title: 'Game started!',
+        description: 'Let the chaos begin! Start writing your story.',
+      });
       setGameState('playing');
+    });
+
+    // Story completed
+    socket.on('story:completed', ({ storyId: completedStoryId }) => {
+      console.log('Story completed!', completedStoryId);
+      toast({
+        title: 'Story completed! 🎉',
+        description: 'Check out your masterpiece!',
+      });
+      setGameState('completed');
     });
 
     // AI thinking
@@ -214,6 +257,7 @@ export default function RoomPage({ params }: RoomPageProps) {
       socket.off('room:player-left');
       socket.off('story:new-contribution');
       socket.off('game:started');
+      socket.off('story:completed');
       socket.off('game:ai-thinking');
       socket.off('player:typing');
     };
@@ -266,6 +310,30 @@ export default function RoomPage({ params }: RoomPageProps) {
     // State transition will happen when we receive game:started event
   };
 
+  /**
+   * Handle end game
+   */
+  const handleEndGame = () => {
+    if (!storyId) return;
+
+    endStory(roomId, storyId);
+    // State transition will happen when we receive story:completed event
+  };
+
+  /**
+   * Handle play again
+   */
+  const handlePlayAgain = () => {
+    router.push('/');
+  };
+
+  /**
+   * Handle back to home
+   */
+  const handleBackToHome = () => {
+    router.push('/');
+  };
+
   // Loading state
   if (gameState === 'joining' || !playerId) {
     return (
@@ -294,6 +362,21 @@ export default function RoomPage({ params }: RoomPageProps) {
     );
   }
 
+  // Story completed state
+  if (gameState === 'completed') {
+    return (
+      <StoryRecap
+        roomId={roomId}
+        contributions={contributions}
+        players={players}
+        gameMode={roomData?.gameMode || 'freeform'}
+        theme={roomData?.theme}
+        onPlayAgain={handlePlayAgain}
+        onBackToHome={handleBackToHome}
+      />
+    );
+  }
+
   // Game playing state
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
@@ -304,7 +387,18 @@ export default function RoomPage({ params }: RoomPageProps) {
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Plot Twist</h1>
             <p className="text-sm text-[var(--text-tertiary)]">Room: {roomId}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            {/* End Game Button */}
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleEndGame}
+              disabled={!storyId || contributions.length === 0}
+            >
+              End Game
+            </Button>
+
+            {/* Connection Status */}
             {isConnected ? (
               <div className="flex items-center gap-2 text-sm text-[var(--color-success)]">
                 <div className="w-2 h-2 bg-[var(--color-success)] rounded-full animate-pulse" />

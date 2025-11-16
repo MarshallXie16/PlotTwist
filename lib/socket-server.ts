@@ -14,6 +14,7 @@ import {
   getStoryByRoom,
   isRoomFull,
   getStoryContributions,
+  completeStory,
 } from './db';
 import { getAIService } from './ai-service';
 import type { TwistType } from './ai-prompts';
@@ -404,6 +405,41 @@ export function initSocketServer(httpServer: HTTPServer): SocketIOServer {
         console.error('[Socket.io] Error generating AI twist:', error);
         io?.to(roomId).emit('game:ai-thinking', { isThinking: false });
         socket.emit('error', { message: 'Failed to generate AI twist' });
+      }
+    });
+
+    /**
+     * End the current story
+     */
+    socket.on('game:end-story', async ({ roomId, storyId }) => {
+      try {
+        // Validate room and story
+        const room = getRoom(roomId);
+        if (!room) {
+          socket.emit('error', { message: 'Room not found' });
+          return;
+        }
+
+        const story = getStoryByRoom(roomId);
+        if (!story || story.id !== storyId) {
+          socket.emit('error', { message: 'Story not found' });
+          return;
+        }
+
+        // Mark story as complete
+        completeStory(storyId);
+        const completedAt = Date.now();
+
+        // Broadcast to all players
+        io?.to(roomId).emit('story:completed', {
+          storyId,
+          completedAt,
+        });
+
+        console.log(`[Game] Story ${storyId} completed in room ${roomId}`);
+      } catch (error) {
+        console.error('[Socket.io] Error ending story:', error);
+        socket.emit('error', { message: 'Failed to end story' });
       }
     });
 
