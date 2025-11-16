@@ -17,6 +17,9 @@ const config: Config = {
     }],
   },
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(nanoid)/)',
+  ],
   collectCoverageFrom: [
     'lib/**/*.{ts,tsx}',
     'hooks/**/*.{ts,tsx}',
