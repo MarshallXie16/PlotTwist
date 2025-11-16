@@ -22,6 +22,7 @@ interface UseSocketReturn {
   ) => Promise<{ success: boolean; contributionId?: string; error?: string }>;
   startTyping: (roomId: string, playerId: string) => void;
   stopTyping: (roomId: string, playerId: string) => void;
+  requestAITwist: (roomId: string) => void;
 }
 
 /**
@@ -136,6 +137,14 @@ export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSoc
     socketRef.current.emit('typing:stop', { roomId, playerId });
   }, []);
 
+  /**
+   * Request an AI-generated twist
+   */
+  const requestAITwist = useCallback((roomId: string) => {
+    if (!socketRef.current) return;
+    socketRef.current.emit('game:request-ai-twist', { roomId });
+  }, []);
+
   return {
     socket,
     isConnected,
@@ -144,5 +153,6 @@ export function useSocket({ autoConnect = true }: UseSocketOptions = {}): UseSoc
     submitContribution,
     startTyping,
     stopTyping,
+    requestAITwist,
   };
 }

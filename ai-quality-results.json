@@ -1,0 +1,432 @@
+{
+  "summary": {
+    "totalTests": 60,
+    "successCount": 60,
+    "successRate": 100,
+    "fallbackCount": 0,
+    "avgResponseTime": 101.15,
+    "totalTime": 6073
+  },
+  "results": [
+    {
+      "scenario": "Simple beginning",
+      "context": "Once upon a time, there was a small village.",
+      "twist": "A time traveler from 10 minutes in the future burst through the door, out of breath, just to say 'Whatever you're about to do, do it, it's hilarious' before disappearing again.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Action scene",
+      "context": "The hero drew their sword and charged at the dragon.",
+      "twist": "The lights dimmed and a spotlight appeared from nowhere. The situation had inexplicably become a musical number. Everyone knew all the words and choreography but had no idea why.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Romance setup",
+      "context": "They locked eyes across the crowded coffee shop, hearts racing.",
+      "twist": "The universe's autocorrect feature activated, changing one random word in everything everyone said to 'banana.' Communication became simultaneously important and banana.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Mystery opening",
+      "context": "The detective examined the crime scene, searching for clues.",
+      "twist": "At that exact moment, all the furniture in the room developed strong opinions about interior design and started rearranging itself while passive-aggressively judging everyone's decorating choices.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Workplace drama",
+      "context": "The quarterly review meeting was about to begin, and tensions were high.",
+      "twist": "A wild narrator appeared! But this narrator was clearly reading the wrong script and started describing a completely different story about competitive yogurt tasting.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Space adventure",
+      "context": "The spaceship approached the unknown planet, sensors beeping frantically.",
+      "twist": "An interdimensional customer service representative materialized. 'Hi, you've reached Universe Support. Your reality is experiencing technical difficulties. Have you tried turning it off and on again?'",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Cooking show",
+      "context": "The chef began preparing the secret ingredient: organic, free-range asparagus.",
+      "twist": "At that exact moment, all the furniture in the room developed strong opinions about interior design and started rearranging itself while passive-aggressively judging everyone's decorating choices.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Pet perspective",
+      "context": "The dog watched as its owner left for work, alone again.",
+      "twist": "The fourth wall cracked like glass, and the characters could suddenly see the audience/readers. They started taking suggestions and seemed really self-conscious about it.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Road trip",
+      "context": "Mile marker 47. Still three hours from Vegas. The radio played nothing but static.",
+      "twist": "Without warning, the room filled with a thick fog that smelled suspiciously like grandma's perfume mixed with old cheese. The fog also narrated everything happening in a sports commentator voice.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Job interview",
+      "context": "She adjusted her blazer and knocked on the CEO's office door.",
+      "twist": "Suddenly, gravity reversed itself, but only for objects that start with the letter 'P'. Pizza slices, pencils, and particularly surprised pigeons began floating toward the ceiling.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Grocery shopping",
+      "context": "She reached for the last box of cereal on the shelf.",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "First day of school",
+      "context": "The teacher wrote her name on the board: Ms. Pemberton.",
+      "twist": "Reality glitched like a video game, and suddenly everyone had health bars floating above their heads. Someone's anxiety was dealing critical damage.",
+      "responseTime": 100,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Haunted house",
+      "context": "The door creaked open slowly, revealing darkness beyond.",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Sports game",
+      "context": "Bottom of the ninth, bases loaded, two outs. The pitcher wound up.",
+      "twist": "A government official in a suit appeared holding a clipboard. 'Excuse me, do you have a permit for this narrative?' They started writing citations for unlicensed plot development.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Wedding ceremony",
+      "context": "The priest cleared his throat. \"If anyone objects to this union...\"",
+      "twist": "A time traveler from 10 minutes in the future burst through the door, out of breath, just to say 'Whatever you're about to do, do it, it's hilarious' before disappearing again.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Bank heist",
+      "context": "They pulled on their masks and checked the time. 3:14 PM.",
+      "twist": "An interdimensional customer service representative materialized. 'Hi, you've reached Universe Support. Your reality is experiencing technical difficulties. Have you tried turning it off and on again?'",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Science experiment",
+      "context": "The beaker bubbled ominously as Dr. Chen added the final chemical.",
+      "twist": "Plot twist: The protagonist was actually three raccoons in a trench coat the entire time. The raccoons are now arguing about who gets to control the left arm.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Family dinner",
+      "context": "Mom asked the question everyone was dreading: \"So, any relationship news?\"",
+      "twist": "Someone sneezed, and due to a rare atmospheric condition, the sneeze achieved sentience and started apologizing profusely for existing.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Zombie apocalypse",
+      "context": "The horde shambled closer. We had maybe five minutes.",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Office party",
+      "context": "Karen from HR tapped the microphone. \"Time for team building activities!\"",
+      "twist": "A government official in a suit appeared holding a clipboard. 'Excuse me, do you have a permit for this narrative?' They started writing citations for unlicensed plot development.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Treasure hunt",
+      "context": "X marked the spot. They began to dig.",
+      "twist": "A wild narrator appeared! But this narrator was clearly reading the wrong script and started describing a completely different story about competitive yogurt tasting.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Breakup conversation",
+      "context": "They sat down on the park bench. \"We need to talk.\"",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Camping trip",
+      "context": "The tent was finally set up. Only took three hours.",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Talent show",
+      "context": "She walked onto the stage, juggling pins in hand.",
+      "twist": "The lights dimmed and a spotlight appeared from nowhere. The situation had inexplicably become a musical number. Everyone knew all the words and choreography but had no idea why.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Alien encounter",
+      "context": "The spacecraft landed in the cornfield with a soft thud.",
+      "twist": "A wild narrator appeared! But this narrator was clearly reading the wrong script and started describing a completely different story about competitive yogurt tasting.",
+      "responseTime": 99,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Therapy session",
+      "context": "The therapist leaned forward. \"Tell me about your childhood.\"",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Elevator pitch",
+      "context": "The investor looked up from his phone. \"You have 30 seconds.\"",
+      "twist": "An interdimensional customer service representative materialized. 'Hi, you've reached Universe Support. Your reality is experiencing technical difficulties. Have you tried turning it off and on again?'",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Cooking disaster",
+      "context": "The smoke alarm started screaming. Again.",
+      "twist": "Without warning, the room filled with a thick fog that smelled suspiciously like grandma's perfume mixed with old cheese. The fog also narrated everything happening in a sports commentator voice.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Superhero origin",
+      "context": "The radioactive spider bite was starting to tingle.",
+      "twist": "Reality glitched like a video game, and suddenly everyone had health bars floating above their heads. Someone's anxiety was dealing critical damage.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Traffic jam",
+      "context": "They'd been sitting in the same spot for 45 minutes.",
+      "twist": "Without warning, the room filled with a thick fog that smelled suspiciously like grandma's perfume mixed with old cheese. The fog also narrated everything happening in a sports commentator voice.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Karaoke night",
+      "context": "The intro to \"Don't Stop Believin'\" started playing.",
+      "twist": "Someone sneezed, and due to a rare atmospheric condition, the sneeze achieved sentience and started apologizing profusely for existing.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Dentist appointment",
+      "context": "The drill whirred to life. \"This won't hurt a bit.\"",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Book club",
+      "context": "Margaret cleared her throat. \"I actually didn't finish the book.\"",
+      "twist": "Someone sneezed, and due to a rare atmospheric condition, the sneeze achieved sentience and started apologizing profusely for existing.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Time loop",
+      "context": "The alarm clock read 6:00 AM. Again. For the 47th time.",
+      "twist": "The fourth wall cracked like glass, and the characters could suddenly see the audience/readers. They started taking suggestions and seemed really self-conscious about it.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Fortune teller",
+      "context": "The crystal ball glowed. \"I see... wait, that can't be right.\"",
+      "twist": "The universe's autocorrect feature activated, changing one random word in everything everyone said to 'banana.' Communication became simultaneously important and banana.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Yoga class",
+      "context": "The instructor smiled serenely. \"Now, into downward dog.\"",
+      "twist": "Reality glitched like a video game, and suddenly everyone had health bars floating above their heads. Someone's anxiety was dealing critical damage.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Museum heist",
+      "context": "The Mona Lisa was right there, just beyond the laser grid.",
+      "twist": "The fourth wall cracked like glass, and the characters could suddenly see the audience/readers. They started taking suggestions and seemed really self-conscious about it.",
+      "responseTime": 100,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Bake sale",
+      "context": "She proudly displayed her cookies. They were... unique.",
+      "twist": "Someone sneezed, and due to a rare atmospheric condition, the sneeze achieved sentience and started apologizing profusely for existing.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Phone call",
+      "context": "An unknown number. They answered anyway. \"Hello?\"",
+      "twist": "Suddenly, gravity reversed itself, but only for objects that start with the letter 'P'. Pizza slices, pencils, and particularly surprised pigeons began floating toward the ceiling.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Underground bunker",
+      "context": "The heavy door sealed shut behind them. No turning back now.",
+      "twist": "The lights dimmed and a spotlight appeared from nowhere. The situation had inexplicably become a musical number. Everyone knew all the words and choreography but had no idea why.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Art gallery",
+      "context": "The painting was just a red square. It cost $2 million.",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Poker game",
+      "context": "All in. They pushed their chips to the center.",
+      "twist": "Someone sneezed, and due to a rare atmospheric condition, the sneeze achieved sentience and started apologizing profusely for existing.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Swimming pool",
+      "context": "The water was colder than expected. Much colder.",
+      "twist": "A government official in a suit appeared holding a clipboard. 'Excuse me, do you have a permit for this narrative?' They started writing citations for unlicensed plot development.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Library",
+      "context": "The ancient book fell open to a page written in symbols.",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Laundromat",
+      "context": "One sock went in. Zero socks came out. Classic.",
+      "twist": "Time started running backwards, but only for embarrassing moments. Everyone had to relive their most cringe-worthy experiences in reverse while moving forward normally.",
+      "responseTime": 100,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Prom night",
+      "context": "The DJ announced the last slow dance of the evening.",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Witness protection",
+      "context": "New name, new city, new life. Time to blend in.",
+      "twist": "Reality glitched like a video game, and suddenly everyone had health bars floating above their heads. Someone's anxiety was dealing critical damage.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Reality TV",
+      "context": "The host smiled at the camera. \"Someone's going home tonight.\"",
+      "twist": "A time traveler from 10 minutes in the future burst through the door, out of breath, just to say 'Whatever you're about to do, do it, it's hilarious' before disappearing again.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Escape room",
+      "context": "Fifteen minutes left. They still hadn't found the third key.",
+      "twist": "A time traveler from 10 minutes in the future burst through the door, out of breath, just to say 'Whatever you're about to do, do it, it's hilarious' before disappearing again.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Retirement party",
+      "context": "After 40 years, Bob was finally free. Or was he?",
+      "twist": "A time traveler from 10 minutes in the future burst through the door, out of breath, just to say 'Whatever you're about to do, do it, it's hilarious' before disappearing again.",
+      "responseTime": 100,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Paranormal investigation",
+      "context": "The EMF detector spiked. Something was definitely here.",
+      "twist": "Reality glitched like a video game, and suddenly everyone had health bars floating above their heads. Someone's anxiety was dealing critical damage.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Fashion show",
+      "context": "The model strutted down the runway wearing... that.",
+      "twist": "Someone sneezed, and due to a rare atmospheric condition, the sneeze achieved sentience and started apologizing profusely for existing.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Courtroom drama",
+      "context": "The judge banged the gavel. \"Order in the court!\"",
+      "twist": "A wild narrator appeared! But this narrator was clearly reading the wrong script and started describing a completely different story about competitive yogurt tasting.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Mountain climbing",
+      "context": "One more step. Just one more step to the summit.",
+      "twist": "Just then, everyone's inner monologue became audible to everyone else, but translated through Google Translate five times and spoken by a confused parrot.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Garage band",
+      "context": "They counted off. \"One, two, three, four!\" Then chaos.",
+      "twist": "The lights dimmed and a spotlight appeared from nowhere. The situation had inexplicably become a musical number. Everyone knew all the words and choreography but had no idea why.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Silent auction",
+      "context": "The bidding war for the questionable artwork had begun.",
+      "twist": "An interdimensional customer service representative materialized. 'Hi, you've reached Universe Support. Your reality is experiencing technical difficulties. Have you tried turning it off and on again?'",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Time travel paradox",
+      "context": "They just met their past self. This was going to be awkward.",
+      "twist": "A wild narrator appeared! But this narrator was clearly reading the wrong script and started describing a completely different story about competitive yogurt tasting.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Gym motivation",
+      "context": "New year, new me. Day 1 at the gym. And probably day last.",
+      "twist": "Without warning, the room filled with a thick fog that smelled suspiciously like grandma's perfume mixed with old cheese. The fog also narrated everything happening in a sports commentator voice.",
+      "responseTime": 101,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Medieval fantasy",
+      "context": "The dragon's shadow fell across the village.",
+      "twist": "Suddenly, gravity reversed itself, but only for objects that start with the letter 'P'. Pizza slices, pencils, and particularly surprised pigeons began floating toward the ceiling.",
+      "responseTime": 102,
+      "usedFallback": false
+    },
+    {
+      "scenario": "Submarine mission",
+      "context": "Diving deeper. The pressure gauge was not happy about it.",
+      "twist": "The lights dimmed and a spotlight appeared from nowhere. The situation had inexplicably become a musical number. Everyone knew all the words and choreography but had no idea why.",
+      "responseTime": 101,
+      "usedFallback": false
+    }
+  ]
+}

@@ -13,7 +13,10 @@ import {
   addContribution,
   getStoryByRoom,
   isRoomFull,
+  getStoryContributions,
 } from './db';
+import { getAIService } from './ai-service';
+import type { TwistType } from './ai-prompts';
 
 // Singleton pattern for Socket.io server
 let io: SocketIOServer<
@@ -204,6 +207,67 @@ export function initSocketServer(httpServer: HTTPServer): SocketIOServer {
           nickname: player.nickname,
           isTyping: false,
         });
+      }
+    });
+
+    // ========== AI TWISTS ==========
+
+    /**
+     * Request an AI-generated twist
+     */
+    socket.on('game:request-ai-twist', async ({ roomId }) => {
+      try {
+        // Get room and story
+        const room = getRoom(roomId);
+        if (!room) {
+          socket.emit('error', { message: 'Room not found' });
+          return;
+        }
+
+        const story = getStoryByRoom(roomId);
+        if (!story) {
+          socket.emit('error', { message: 'No active story in this room' });
+          return;
+        }
+
+        // Notify all players that AI is thinking
+        io?.to(roomId).emit('game:ai-thinking', { isThinking: true });
+
+        // Get story contributions for context
+        const contributions = getStoryContributions(story.id);
+
+        // Generate AI twist
+        const aiService = getAIService({ useMock: !process.env.ANTHROPIC_API_KEY });
+        const response = await aiService.generateTwist({
+          contributions,
+          theme: room.theme || undefined,
+        });
+
+        // Add AI contribution to story
+        const aiContribution = addContribution(
+          story.id,
+          response.twist,
+          'ai',
+          undefined,
+          'twist' // AI contributions are always "twists"
+        );
+
+        // Notify AI is done thinking
+        io?.to(roomId).emit('game:ai-thinking', { isThinking: false });
+
+        // Broadcast the twist to all players
+        io?.to(roomId).emit('story:new-contribution', {
+          contributionId: aiContribution.id,
+          content: aiContribution.content,
+          type: 'ai',
+          orderNum: aiContribution.order_num,
+        });
+
+        console.log(`[AI Service] Generated twist for room ${roomId}: "${response.twist.substring(0, 50)}..."`);
+      } catch (error) {
+        console.error('[Socket.io] Error generating AI twist:', error);
+        io?.to(roomId).emit('game:ai-thinking', { isThinking: false });
+        socket.emit('error', { message: 'Failed to generate AI twist' });
       }
     });
 
