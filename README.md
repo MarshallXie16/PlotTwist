@@ -196,10 +196,29 @@ npm run start
 
 ## Documentation
 
-- **Design Docs**: See `design_docs/` for business plan, technical requirements, product design, roadmap, and user stories
-- **Project Memory**: See `memory.md` for architecture decisions and patterns
-- **Task List**: See `tasks.md` for current priorities and roadmap
-- **Claude Agent Guide**: See `.claude/CLAUDE.md` for AI agent instructions
+### Technical Documentation (`docs/`)
+
+Comprehensive technical documentation for developers:
+
+1. **[Quick Start Guide](./docs/00-quick-start.md)** - Get up and running in new sessions
+2. **[Architecture Overview](./docs/01-architecture.md)** - System architecture, tech stack, design decisions
+3. **[Component Reference](./docs/02-components.md)** - Behavior and usage of all game components
+4. **[API Reference](./docs/03-api-reference.md)** - REST API endpoints documentation
+5. **[WebSocket Events](./docs/04-websocket-events.md)** - Real-time event flows and types
+
+### Product Documentation (`design_docs/`)
+
+- **Business Plan**: Market analysis, target users, business model
+- **Product Design**: Feature specs, user flows, technical architecture
+- **Technical Requirements**: Performance, security, compliance requirements
+- **Roadmap**: Development phases and milestones
+- **User Stories**: Detailed user journeys and acceptance criteria
+
+### Development Resources
+
+- **Project Memory** (`memory.md`): Architecture decisions, patterns, lessons learned
+- **Task List** (`tasks.md`): Current priorities, backlog, technical debt
+- **Claude Agent Guide** (`.claude/CLAUDE.md`): AI agent instructions and workflow
 
 ## Contributing
 
