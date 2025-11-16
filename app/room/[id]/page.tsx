@@ -34,6 +34,7 @@ export default function RoomPage({ params }: RoomPageProps) {
     maxPlayers: number;
   } | null>(null);
   const [aiThinking, setAIThinking] = useState(false);
+  const [hasJoinedSocket, setHasJoinedSocket] = useState(false);
 
   const { toast } = useToast();
 
@@ -105,7 +106,7 @@ export default function RoomPage({ params }: RoomPageProps) {
    * Connect to WebSocket when playerId is ready
    */
   useEffect(() => {
-    if (!playerId || !isConnected) return;
+    if (!playerId || !isConnected || hasJoinedSocket) return;
 
     const connect = async () => {
       const result = await joinRoom(roomId, playerId);
@@ -113,6 +114,9 @@ export default function RoomPage({ params }: RoomPageProps) {
         console.error('Failed to join room via WebSocket:', result.error);
         return;
       }
+
+      // Mark as joined to prevent duplicate joins
+      setHasJoinedSocket(true);
 
       // Fetch initial room state (players and contributions)
       try {
@@ -145,6 +149,20 @@ export default function RoomPage({ params }: RoomPageProps) {
             setStoryId(data.story.id);
           }
 
+          // Set initial contributions if any exist
+          if (data.contributions && data.contributions.length > 0) {
+            setContributions(
+              data.contributions.map((c: any) => ({
+                id: c.id,
+                content: c.content,
+                type: c.type,
+                playerNickname: c.playerNickname,
+                playerColor: c.playerColor,
+                orderNum: c.orderNum,
+              }))
+            );
+          }
+
           // If game already started, set state to playing
           if (data.stats.isGameStarted && data.stats.contributionCount > 0) {
             setGameState('playing');
@@ -161,7 +179,8 @@ export default function RoomPage({ params }: RoomPageProps) {
     };
 
     connect();
-  }, [playerId, isConnected, joinRoom, roomId, roomData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerId, isConnected, hasJoinedSocket]);
 
   /**
    * Listen to WebSocket events
@@ -181,10 +200,13 @@ export default function RoomPage({ params }: RoomPageProps) {
         if (prev.some((p) => p.id === newPlayerId)) {
           return prev;
         }
-        toast({
-          title: 'Player joined',
-          description: `${nickname} joined the room`,
-        });
+        // Show toast notification AFTER state update
+        setTimeout(() => {
+          toast({
+            title: 'Player joined',
+            description: `${nickname} joined the room`,
+          });
+        }, 0);
         return [...prev, { id: newPlayerId, nickname, color, isActive: true, isTyping: false }];
       });
     });
@@ -194,11 +216,14 @@ export default function RoomPage({ params }: RoomPageProps) {
       setPlayers((prev) => {
         const leftPlayer = prev.find((p) => p.id === leftPlayerId);
         if (leftPlayer) {
-          toast({
-            title: 'Player left',
-            description: `${leftPlayer.nickname} left the room`,
-            variant: 'destructive',
-          });
+          // Show toast notification AFTER state update
+          setTimeout(() => {
+            toast({
+              title: 'Player left',
+              description: `${leftPlayer.nickname} left the room`,
+              variant: 'destructive',
+            });
+          }, 0);
         }
         return prev.map((p) => (p.id === leftPlayerId ? { ...p, isActive: false } : p));
       });
