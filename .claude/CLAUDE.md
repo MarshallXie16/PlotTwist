@@ -257,3 +257,189 @@ Before considering any feature complete:
 - [ ] Will it scale?
 
 Remember: You are the lead engineer. Own the product quality. Make decisions. Build systematically. Ship consistently.
+
+---
+
+## Current Project Structure (Week 1 Complete)
+
+### Directory Layout
+
+```
+PlotTwist/
+├── .claude/                    # AI agent configuration
+│   └── CLAUDE.md              # THIS FILE - Agent instructions
+│
+├── __mocks__/                 # Test mocks
+│   └── styleMock.js           # CSS import mock for Jest
+│
+├── app/                       # Next.js 14 App Router
+│   ├── favicon.ico
+│   ├── globals.css            # Design tokens (150+ lines of CSS variables)
+│   ├── layout.tsx             # Root layout (dark mode, Toaster)
+│   └── page.tsx               # Landing page (placeholder)
+│
+├── components/
+│   └── ui/                    # shadcn/ui components (8 components)
+│       ├── badge.tsx          # Status badges (5 variants)
+│       ├── button.tsx         # Buttons (5 variants, 4 sizes)
+│       ├── card.tsx           # Container components
+│       ├── dialog.tsx         # Modal system
+│       ├── input.tsx          # Form inputs
+│       ├── textarea.tsx       # Multi-line inputs
+│       ├── toast.tsx          # Notifications
+│       └── toaster.tsx        # Toast provider
+│
+├── design_docs/               # Product design (user-provided)
+│   ├── business_plan.md
+│   ├── product_design.md
+│   ├── technical_requirements.md
+│   ├── roadmap.md
+│   └── user_stories.md
+│
+├── hooks/
+│   └── use-toast.ts           # Toast notification hook (170 lines)
+│
+├── lib/                       # Core business logic
+│   ├── __tests__/
+│   │   ├── db.test.ts         # 19 database tests (all passing)
+│   │   └── utils.test.ts      # 6 utility tests (all passing)
+│   ├── db.ts                  # SQLite wrapper (400+ lines, 30+ functions)
+│   ├── types.ts               # TypeScript interfaces
+│   └── utils.ts               # Utility functions (cn)
+│
+├── public/                    # Static assets
+│
+├── .env.example               # Environment template
+├── .gitignore
+├── components.json            # shadcn/ui config
+├── eslint.config.mjs
+├── jest.config.ts             # Jest configuration
+├── jest.setup.ts
+├── memory.md                  # Project knowledge base (KEEP UPDATED)
+├── next.config.ts
+├── package.json
+├── postcss.config.mjs
+├── README.md
+├── schema.sql                 # Database schema (80 lines)
+├── tailwind.config.ts
+├── tasks.md                   # Implementation roadmap (KEEP UPDATED)
+└── tsconfig.json
+```
+
+### What's Built (Week 1)
+
+✅ **Foundation**
+- Next.js 14 + TypeScript (strict mode)
+- Tailwind CSS v4 + design tokens
+- Dark mode default
+- ESLint configured
+
+✅ **UI Components** (8 components)
+- All use design tokens (CSS variables)
+- Fully typed, accessible (Radix UI)
+- Professional styling
+
+✅ **Database**
+- SQLite + better-sqlite3
+- 4 tables: rooms, players, stories, contributions
+- 30+ typed functions
+- 19 tests (all passing)
+
+✅ **Testing**
+- Jest + React Testing Library
+- 25 tests total (all passing)
+- 70% coverage threshold
+
+### What's NOT Built Yet
+
+❌ API Routes (create room, join room, Socket.io)
+❌ WebSocket server
+❌ AI integration (Claude API)
+❌ Frontend pages (landing, room, game)
+❌ Real-time game logic
+
+### Key Files to Know
+
+**Core Logic:**
+- `lib/db.ts` - All database functions (400+ lines)
+- `lib/types.ts` - TypeScript types matching DB schema
+- `schema.sql` - Database structure
+
+**UI System:**
+- `app/globals.css` - Design tokens (colors, spacing, etc.)
+- `components/ui/*` - Reusable components
+- `hooks/use-toast.ts` - Toast notifications
+
+**Documentation:**
+- `memory.md` - **CRITICAL**: Detailed project knowledge, keep updated
+- `tasks.md` - Implementation roadmap, mark tasks complete as you work
+- `design_docs/*` - Product requirements (read before implementing features)
+
+### Development Commands
+
+```bash
+npm run dev           # Start dev server (localhost:3000)
+npm test              # Run all tests
+npm run test:watch    # Watch mode
+npm run test:coverage # Coverage report
+npm run type-check    # TypeScript check
+npm run build         # Production build
+```
+
+### Database Functions (Quick Reference)
+
+**Room Management:**
+- `createRoom(gameMode, theme?, maxPlayers?)` → Room
+- `getRoom(roomId)` → Room | null
+- `getActiveRooms()` → Room[]
+- `deactivateRoom(roomId)` → void
+
+**Player Management:**
+- `addPlayer(roomId, nickname, color)` → Player
+- `getActivePlayers(roomId)` → Player[]
+- `isRoomFull(roomId)` → boolean
+- `isNicknameTaken(roomId, nickname)` → boolean
+- `getAvailablePlayerColor(roomId)` → string
+
+**Story Management:**
+- `createStory(roomId)` → Story
+- `getStoryByRoom(roomId)` → Story | null
+- `completeStory(storyId)` → void
+
+**Contribution Management:**
+- `addContribution(storyId, content, type, playerId?, twistType?)` → Contribution
+- `getStoryContributions(storyId)` → ContributionWithPlayer[]
+- `getContributionCount(storyId)` → number
+- `getPlayerContributionCount(storyId)` → number
+- `getAIContributionCount(storyId)` → number
+
+### Design Tokens (CSS Variables)
+
+All UI components use these variables from `app/globals.css`:
+
+**Brand Colors:**
+- `--brand-primary` (#8B5CF6 - Purple)
+- `--brand-secondary` (#F59E0B - Amber)
+- `--brand-accent` (#EC4899 - Pink)
+
+**Player Colors:** (8 distinct)
+- `--player-1` through `--player-6` (red, blue, green, amber, purple, pink)
+
+**Semantic:**
+- `--color-success`, `--color-warning`, `--color-error`, `--color-info`
+
+**Backgrounds:**
+- `--bg-primary`, `--bg-secondary`, `--bg-tertiary`
+
+**Text:**
+- `--text-primary`, `--text-secondary`, `--text-tertiary`
+
+**Usage:** `bg-[var(--brand-primary)]` or `style={{ color: 'var(--text-primary)' }}`
+
+### Next Steps (Week 2)
+
+1. WebSocket server setup (Socket.io)
+2. **CRITICAL**: AI integration + quality testing (2 days - make or break!)
+3. Additional UI components for rooms/stories
+
+See `tasks.md` for full roadmap and `memory.md` for detailed component documentation.

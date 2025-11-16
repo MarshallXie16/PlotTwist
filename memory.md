@@ -1,6 +1,7 @@
 # Plot Twist - Project Memory
 
-**Last Updated**: 2025-11-16
+**Last Updated**: 2025-11-16 (Week 1 Complete)
+**Status**: Foundation complete, ready for Week 2
 
 ## Project Overview
 
@@ -63,65 +64,462 @@ Plot Twist is a real-time multiplayer collaborative storytelling game where an A
 
 ---
 
-## Core Components & Responsibilities
+## Current Project Structure (Week 1)
 
-### Frontend Structure
+### Directory Organization
 
 ```
-app/
-├── page.tsx                 # Landing page (hero, CTA, "How It Works")
-├── room/[id]/page.tsx       # Room page (waiting room → game → recap)
-├── api/                     # API routes
-│   ├── rooms/route.ts       # POST /api/rooms (create room)
-│   ├── rooms/[id]/route.ts  # GET /api/rooms/:id (room details)
-│   └── socket/route.ts      # Socket.io server
-└── layout.tsx               # Root layout with design tokens
-
-components/
-├── ui/                      # shadcn/ui components (button, input, card, etc.)
-├── room/                    # Room-specific components
-│   ├── PlayerList.tsx       # Sidebar showing players
-│   ├── StoryFeed.tsx        # Main story display
-│   ├── ContributionInput.tsx # Player turn input
-│   └── WaitingRoom.tsx      # Pre-game waiting state
-└── shared/                  # Reusable components
-    ├── Toast.tsx            # Notifications
-    └── LoadingSpinner.tsx   # Loading states
-
-lib/
-├── db.ts                    # SQLite wrapper with typed queries
-├── socket.ts                # Socket.io server logic
-├── ai.ts                    # Claude API integration
-├── utils.ts                 # Helper functions
-└── types.ts                 # TypeScript type definitions
+PlotTwist/
+├── .claude/                 # AI agent configuration
+│   └── CLAUDE.md           # Agent instructions and project setup guide
+│
+├── __mocks__/              # Test mocks
+│   └── styleMock.js        # CSS import mock for Jest
+│
+├── app/                    # Next.js 14 App Router
+│   ├── favicon.ico         # Site icon
+│   ├── globals.css         # Global styles + design tokens (150+ lines)
+│   ├── layout.tsx          # Root layout (dark mode, Toaster provider)
+│   └── page.tsx            # Landing page (placeholder, will implement Week 3)
+│
+├── components/             # React components
+│   └── ui/                 # shadcn/ui component library (copy-pasted, not npm package)
+│       ├── badge.tsx       # Status indicators (5 variants)
+│       ├── button.tsx      # Buttons (5 variants: default, secondary, ghost, destructive, outline)
+│       ├── card.tsx        # Container components (Card, CardHeader, CardContent, etc.)
+│       ├── dialog.tsx      # Modal dialogs (Radix UI primitive)
+│       ├── input.tsx       # Form input with focus states
+│       ├── textarea.tsx    # Multi-line input for story contributions
+│       ├── toast.tsx       # Notification system (Radix UI primitive)
+│       └── toaster.tsx     # Toast provider component
+│
+├── design_docs/            # Product design documents
+│   ├── business_plan.md    # Market analysis, business model, success metrics
+│   ├── product_design.md   # Visual design system, brand voice, UI patterns
+│   ├── technical_requirements.md  # Tech stack, architecture, MVP scope
+│   ├── roadmap.md          # 5-6 week implementation timeline
+│   └── user_stories.md     # User journeys, acceptance criteria
+│
+├── hooks/                  # React custom hooks
+│   └── use-toast.ts        # Toast notification state management (170 lines)
+│
+├── lib/                    # Core business logic and utilities
+│   ├── __tests__/          # Unit tests
+│   │   ├── db.test.ts      # Database tests (19 tests, all passing)
+│   │   └── utils.test.ts   # Utility function tests (6 tests, all passing)
+│   ├── db.ts               # SQLite database wrapper (400+ lines, 30+ functions)
+│   ├── types.ts            # TypeScript type definitions (Room, Player, Story, etc.)
+│   └── utils.ts            # Utility functions (cn for className merging)
+│
+├── public/                 # Static assets
+│   └── *.svg               # Next.js default SVG icons
+│
+├── .env.example            # Environment variable template
+├── .gitignore              # Git ignore patterns (includes *.db, node_modules, etc.)
+├── components.json         # shadcn/ui configuration
+├── eslint.config.mjs       # ESLint configuration
+├── jest.config.ts          # Jest test configuration
+├── jest.setup.ts           # Jest setup file (Testing Library matchers)
+├── memory.md               # THIS FILE - Project knowledge base
+├── next.config.ts          # Next.js configuration
+├── package.json            # Dependencies and scripts
+├── postcss.config.mjs      # PostCSS configuration (for Tailwind)
+├── README.md               # Project documentation and setup guide
+├── schema.sql              # SQLite database schema (80 lines)
+├── tailwind.config.ts      # Tailwind CSS configuration
+├── tasks.md                # Implementation roadmap and task tracking
+└── tsconfig.json           # TypeScript configuration (strict mode)
 ```
 
-### Database Schema
+### What's Implemented (Week 1 Complete)
 
-**Tables**:
-- `rooms`: Room metadata, expiration, game mode, theme
-- `players`: Player info, room association, nickname, color, active status
-- `stories`: Story metadata per room, completion status
-- `contributions`: Individual story contributions (player or AI), ordered
+✅ **Foundation**
+- Next.js 14 with TypeScript (strict mode)
+- Tailwind CSS v4 with complete design system
+- Dark mode by default
+- ESLint configured
 
-**Indexes**:
-- `idx_rooms_active`: Fast lookup of active, non-expired rooms
-- `idx_players_room`: Fast lookup of players in a room
-- `idx_contributions_story`: Fast ordered retrieval of story contributions
+✅ **UI Component Library** (shadcn/ui)
+- 8 production-ready components
+- All components use Plot Twist design tokens
+- Fully typed with TypeScript
+- Accessible (Radix UI primitives)
 
-### WebSocket Events
+✅ **Database Layer**
+- SQLite with better-sqlite3
+- Complete schema (4 tables, indexes, constraints)
+- Typed wrapper with 30+ functions
+- 19 comprehensive tests (all passing)
 
-**Client → Server**:
-- `player:join` - Player connects to room
-- `player:write` - Submit story contribution
-- `player:disconnect` - Player leaves
+✅ **Testing Infrastructure**
+- Jest + React Testing Library
+- ts-jest for TypeScript support
+- 70% coverage threshold
+- 25 tests total (all passing)
 
-**Server → Client**:
-- `story:update` - New contribution added (broadcast to all in room)
-- `player:joined` - New player joined room
-- `player:left` - Player left room
-- `ai:thinking` - AI is generating response
-- `next:turn` - Whose turn is it now
+✅ **Development Tooling**
+- Type checking (tsc --noEmit)
+- Test scripts (test, test:watch, test:coverage)
+- Git workflow established
+- All code committed and pushed
+
+### What's NOT Yet Implemented (Planned for Week 2+)
+
+❌ **Frontend Pages**
+- Landing page (placeholder exists)
+- Room pages (create, join, game view)
+- Story recap page
+
+❌ **API Routes**
+- Room creation endpoint
+- Room join endpoint
+- Socket.io server
+
+❌ **Game Logic**
+- WebSocket real-time sync
+- Turn management
+- AI integration
+- Story flow
+
+❌ **Features**
+- Room creation flow
+- Player joining
+- Story collaboration
+- AI chaos agent
+
+---
+
+## Core Components Deep Dive
+
+### 1. Database Layer (`lib/db.ts`)
+
+**Purpose**: Type-safe interface to SQLite database
+
+**Key Functions** (organized by domain):
+
+**Room Management:**
+- `createRoom(gameMode, theme?, maxPlayers?)` - Create new room with 24h expiration
+- `getRoom(roomId)` - Retrieve room by ID
+- `getActiveRooms()` - List all non-expired rooms
+- `deactivateRoom(roomId)` - Mark room as inactive
+- `cleanupExpiredRooms()` - Batch cleanup of expired rooms
+
+**Player Management:**
+- `addPlayer(roomId, nickname, color)` - Add player to room
+- `getPlayer(playerId)` - Retrieve player by ID
+- `getActivePlayers(roomId)` - List active players in room
+- `deactivatePlayer(playerId)` - Mark player as inactive
+- `isRoomFull(roomId)` - Check if room is at capacity
+- `getAvailablePlayerColor(roomId)` - Get unused color from pool
+- `isNicknameTaken(roomId, nickname)` - Check for duplicates (case-insensitive)
+
+**Story Management:**
+- `createStory(roomId)` - Initialize story for room
+- `getStory(storyId)` - Retrieve story by ID
+- `getStoryByRoom(roomId)` - Get story for specific room
+- `completeStory(storyId)` - Mark story as complete
+
+**Contribution Management:**
+- `addContribution(storyId, content, type, playerId?, twistType?)` - Add player/AI contribution
+- `getContribution(contributionId)` - Retrieve contribution by ID
+- `getStoryContributions(storyId)` - Get all contributions with player info (JOIN query)
+- `getContributionCount(storyId)` - Total contributions
+- `getPlayerContributionCount(storyId)` - Count player contributions
+- `getAIContributionCount(storyId)` - Count AI contributions
+
+**Implementation Details:**
+- Uses better-sqlite3 for synchronous, high-performance queries
+- In-memory database for tests (`:memory:`)
+- WAL mode for better concurrency
+- Foreign keys enabled for data integrity
+- Custom `generateId()` function (replaces nanoid to avoid ESM issues)
+- All functions return typed objects (no `any` types)
+
+**Testing:**
+- 19 comprehensive tests covering all functions
+- Tests use in-memory database for speed and isolation
+- Edge cases tested: expired rooms, full rooms, duplicate nicknames
+
+### 2. Type Definitions (`lib/types.ts`)
+
+**Purpose**: Central TypeScript type definitions matching database schema
+
+**Core Types:**
+```typescript
+interface Room {
+  id: string;
+  created_at: number;
+  expires_at: number;
+  is_active: number;        // SQLite boolean (0 or 1)
+  max_players: number;
+  game_mode: 'freeform' | 'themed';
+  theme: string | null;
+}
+
+interface Player {
+  id: string;
+  room_id: string;
+  nickname: string;
+  color: string;            // Hex color from PLAYER_COLORS
+  joined_at: number;
+  is_active: number;
+}
+
+interface Story {
+  id: string;
+  room_id: string;
+  started_at: number;
+  completed_at: number | null;
+  is_complete: number;
+}
+
+interface Contribution {
+  id: string;
+  story_id: string;
+  player_id: string | null;  // null for AI contributions
+  content: string;
+  type: 'player' | 'ai';
+  order_num: number;
+  created_at: number;
+  twist_type: 'insert' | 'twist' | null;
+}
+```
+
+**Helper Types:**
+- `ContributionWithPlayer` - Contribution with player nickname/color (from JOIN)
+- `RoomWithPlayers` - Room with players array
+- `PLAYER_COLORS` - Const array of 8 hex colors from design system
+- `PlayerColor` - Union type of player colors
+
+### 3. UI Components (`components/ui/*`)
+
+**Purpose**: Professional, accessible UI components using shadcn/ui patterns
+
+**Button Component (`button.tsx`):**
+- 5 variants: default (gradient), secondary (outline), ghost, destructive, outline
+- 4 sizes: default, sm, lg, icon
+- Uses class-variance-authority for type-safe variants
+- Supports asChild prop for composition (Radix Slot)
+- Hover effects: translate-y, opacity, shadow changes
+
+**Input/Textarea (`input.tsx`, `textarea.tsx`):**
+- Focus states with purple ring (--border-focus)
+- Placeholder styling with tertiary text color
+- Disabled states (opacity 50%, cursor not-allowed)
+- Responsive font sizes (text-base → text-sm on md breakpoint)
+
+**Card Components (`card.tsx`):**
+- Card container with border, background, shadow
+- Hover effects (border color, shadow intensity)
+- Sub-components: CardHeader, CardTitle, CardDescription, CardContent, CardFooter
+- Used for story contributions, player lists, room info
+
+**Dialog (Modal) (`dialog.tsx`):**
+- Based on Radix UI Dialog primitive
+- Full-screen overlay with backdrop
+- Centered content with slide-in animation
+- Close button (X icon from lucide-react)
+- Escape key to close, click outside to close
+
+**Toast Notifications (`toast.tsx`, `toaster.tsx`):**
+- Based on Radix UI Toast primitive
+- 3 variants: default, success, destructive
+- Appears bottom-right (desktop) or top (mobile)
+- Auto-dismiss after 5 seconds
+- Swipe to dismiss support
+- Managed by `use-toast.ts` hook
+
+**Badge Component (`badge.tsx`):**
+- 5 variants: default, secondary, destructive, outline, success
+- Used for player indicators, status labels
+- Rounded-full for pill shape
+
+**Shared Patterns:**
+- All components use `cn()` utility for className merging
+- All colors reference CSS variables (e.g., `var(--brand-primary)`)
+- TypeScript interfaces for all props
+- forwardRef for proper ref handling
+- displayName set for debugging
+
+### 4. Utility Functions (`lib/utils.ts`)
+
+**Purpose**: Helper functions used across the app
+
+**`cn(...inputs)` - ClassName Merger:**
+```typescript
+import { clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+```
+
+**What it does:**
+- Merges multiple className strings
+- Handles conditional classes (false/null/undefined filtered out)
+- Resolves Tailwind conflicts (last class wins)
+- Example: `cn('text-red-500', condition && 'text-blue-500')` → only last color applied
+
+**Testing:**
+- 6 tests covering merging, conflicts, conditionals, arrays, empty cases
+
+### 5. Toast System (`hooks/use-toast.ts`)
+
+**Purpose**: Global toast notification state management
+
+**Architecture:**
+- Singleton state pattern (shared across components)
+- Max 3 toasts at once (TOAST_LIMIT)
+- Auto-dismiss after 5 seconds (TOAST_REMOVE_DELAY)
+- Reducer pattern for state updates
+
+**Key Functions:**
+- `toast({ title, description, variant })` - Show toast
+- `toast.success()` - Shorthand for success variant
+- `toast.error()` - Shorthand for error variant
+- `useToast()` - Hook to access toast state and functions
+
+**Usage Example:**
+```typescript
+const { toast } = useToast()
+
+toast({
+  title: "Room created!",
+  description: "Share the link with your friends",
+  variant: "success"
+})
+```
+
+### 6. Database Schema (`schema.sql`)
+
+**Purpose**: SQLite database structure
+
+**Design Principles:**
+- Foreign keys for referential integrity (CASCADE deletes)
+- Indexes on frequently queried columns
+- CHECK constraints for data validation
+- Integer timestamps (milliseconds since epoch)
+- TEXT primary keys (generated IDs, not auto-increment)
+
+**Key Relationships:**
+- Room → Players (one-to-many, CASCADE delete)
+- Room → Story (one-to-one, CASCADE delete)
+- Story → Contributions (one-to-many, CASCADE delete)
+- Player → Contributions (one-to-many, SET NULL on delete)
+
+**Indexes for Performance:**
+- `idx_rooms_active` - Find active rooms quickly
+- `idx_players_room` - Find players in a room
+- `idx_contributions_story` - Order contributions by order_num
+
+### 7. Design System (`app/globals.css`)
+
+**Purpose**: Complete design token system
+
+**CSS Variables Defined:**
+- Brand colors (purple, amber, pink)
+- Player colors (8 distinct colors)
+- Neutral palette (gray-50 through gray-950)
+- Semantic colors (success, warning, error, info)
+- Spacing scale (space-1 through space-20)
+- Border radius (sm, md, lg, xl, full)
+- Shadows (sm, md, lg, xl)
+- Glow effects (purple, pink for AI)
+- Transitions (fast 150ms, base 200ms, slow 300ms)
+- Z-index scale (base, dropdown, sticky, modal, toast)
+
+**Usage in Components:**
+- All components reference CSS variables: `var(--brand-primary)`
+- Enables easy theming and consistency
+- No hardcoded colors in components
+
+---
+
+## How Components Work Together
+
+### Current Flow (Week 1 - Foundation Only)
+
+```
+User
+  ↓
+Next.js App (app/layout.tsx)
+  ├─ Global Styles (globals.css) - Design tokens loaded
+  ├─ Toaster Provider - Toast notifications ready
+  └─ Page Content
+       └─ UI Components (Button, Input, etc.) - Ready to use
+
+Database
+  ├─ SQLite (plottwist.db or :memory: for tests)
+  └─ Wrapper (lib/db.ts) - Type-safe functions available
+
+Testing
+  ├─ Jest + RTL configured
+  └─ 25 tests passing (utils + database)
+```
+
+### Planned Flow (Week 2+ - Real-time Game)
+
+```
+User Browser
+  ↓
+Next.js Frontend
+  ├─ Landing Page → Create Room
+  ├─ Room Page → Join Room → WebSocket Connection
+  └─ Game View → Real-time Story Display
+       ↓
+WebSocket (Socket.io)
+  ├─ player:join → Broadcast to room
+  ├─ player:write → Save to DB → Broadcast update
+  └─ ai:response → Call Claude API → Broadcast
+       ↓
+Backend
+  ├─ Database (lib/db.ts) → SQLite
+  ├─ AI Service (lib/ai.ts) → Claude API
+  └─ Room State (in-memory Map) → Active sessions
+```
+
+---
+
+## Development Workflows
+
+### Adding a New UI Component
+
+1. Copy component from shadcn/ui or create custom
+2. Place in `components/ui/` directory
+3. Use design tokens (CSS variables) for colors
+4. Add TypeScript interface for props
+5. Export from component file
+6. (Optional) Write component tests
+
+### Adding a Database Function
+
+1. Add SQL query to `lib/db.ts`
+2. Define return type in `lib/types.ts`
+3. Use prepared statements for safety
+4. Write tests in `lib/__tests__/db.test.ts`
+5. Run `npm test` to verify
+6. Update this documentation
+
+### Running Tests
+
+```bash
+npm test              # Run all tests
+npm run test:watch    # Watch mode for development
+npm run test:coverage # Generate coverage report
+```
+
+### Type Checking
+
+```bash
+npm run type-check    # Run TypeScript compiler (no output)
+```
+
+### Development Server
+
+```bash
+npm run dev           # Start Next.js dev server (localhost:3000)
+```
 
 ---
 
